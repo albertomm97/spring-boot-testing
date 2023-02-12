@@ -1,0 +1,93 @@
+Basic Junit assertions:
+  assertEquals (refers to same value, not memory address)
+  assertSame (refers to same memory address)
+  assertNull 
+  assertTrue/assertFalse
+  assertArrayEquals (same than assertEquals but for arrays)
+  assertIterableEquals (same than assertArrayEquals but for List, HashMaps, etc)
+  assertThrows / assertDoesNotThrow
+  assertTimeoutPreemptively (complete the test before given timeout is exeeced)
+
+All the methods before hast its own "Not" method to check the contrary.
+
+We can order test execution with @TestMethodOrder in class level, and use
+@Order in method level.
+
+Code coverage: how many of the codebase are called by tests, represented by %
+
+Conditional test:
+  - @Disbled("reason")
+  - @EnableOnOs(OS.WINDOWS)
+  - @EnableOnJre(VERSION)
+  - @EnableForJreRange(Range)
+  - @EnabledIfSystemProperty(named="", matched="")
+  - @EnabledIfEnvironmentVariable(named="", matched="")
+
+TDD:
+  - 1. Test (write a failing test)
+  - 2. Code (write code to make the test pass)
+  - 3. Refactor (improve design if needed)
+  - 4. Repeat for another test
+
+This helps:
+  - Identifying edge cases
+  - Code confidence
+  - Step by step code development
+  - Freedom to refactor because it will break test if something bad happens.
+
+Parameterize Test (pass a list of parameters to execute the test once per parameter)
+
+  - @ParameterizedTest. We can get the data from different sources
+
+SpringBoot Testing Support
+
+  - @SpringBootTest class annotation
+    - Loads application context
+    - Dependency injection
+    - Data access from application.properties
+
+Mockito:
+  - Mock objects with @Mock or directly in setup method with Mockito.mock()
+  - Probably I'll only use Mockito.mock() and @MockBean
+  - Used for Controller test (mocks the request) and Use case test (generally mocks DAO) 
+
+
+TESTING OPTIONS FOR INTEGRATION TEST:
+  - Emmbebed DB (memory)
+  - Actual DB (MySQL, needs connection)
+  - Test Containers (this is the best optiona, testing using container with all dependencies)
+
+
+TESTING REPOSITORIES (NOT DB CONNECTION, ONLY REPOSITORIES)
+
+@DataJpaTest -> Testing repositories using in memory DB
+             -> Only loads JPA Repositories and Entities
+             -> Test are transactional and roll back at the end of each test
+             -> No need to test Jpa default methods
+
+
+
+
+If we are testing @Service and we need to mock something. At level class just use 
+the mockito extension @ExtendWith(MockitoExtension.class)
+
+@WebMcvTest -> Testing controllers
+            -> Only loads the specified controller and its dependencies
+
+Services with @MockBean (it will add the service to app context and will be injected in controller)
+
+@SpringBootTest -> Loads full application context (good for integration testing).
+                -> Starts embedded server
+                -> Creates a web environment
+
+                -> Options:
+                    -> MOCK(default). Loads app context, provides mock web environment
+                    -> RANDOM_PORT. Loads webserverappcontext and provides real web env
+                                    The embedded server is started and listen to random port.
+
+                    -> DEFINED_PORT. webserverappcontext and provides real web env with
+                                     defined port
+
+                    -> NONE. loads app context but doest not provide web env.
+
+@AutoConfigureMockMcv - if we use MockMvc on @SpringBootTest test to make request
